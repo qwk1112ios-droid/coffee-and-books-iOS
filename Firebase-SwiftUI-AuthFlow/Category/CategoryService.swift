@@ -16,7 +16,7 @@ final class CategoryService : CategoryServiceProtocol {
     let db = Firestore.firestore()
     func fetchCategory() async throws -> [CategoryItem] {
        
-        let snapshot = try await db.collection("categories").getDocuments()
+        let snapshot = try await db.collection("Categories").getDocuments()
 
                return snapshot.documents.compactMap { document in
 

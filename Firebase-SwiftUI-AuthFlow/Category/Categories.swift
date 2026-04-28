@@ -6,23 +6,9 @@
 //
 
 import SwiftUI
-enum Category: String, CaseIterable, Identifiable {
-    case drinks = "Drinks"
-    case coffee = "Coffee"
-    case food = "Food"
-    case more = "More"
-
-    var id: String { rawValue }
-
-    var imageURL: String {
-        switch self {
-        case .drinks, .coffee, .food, .more:
-            return "https://firebasestorage.googleapis.com/v0/b/fir-swiftui-authflow.firebasestorage.app/o/Cappuccino.png?alt=media&token=19babdda-4d01-4760-b16a-88560c5acba5"
-        }
-    }
-}
 
 struct Categories: View {
+    @State var vm = CategoryViewModel(service: CategoryService())
     var body: some View {
         TabView {
             NavigationStack {
@@ -32,7 +18,7 @@ struct Categories: View {
 
                     ScrollView {
                         LazyVStack(spacing: 16) {
-                            ForEach(Category.allCases) { category in
+                            ForEach(vm.categories) { category in
                                 CategoryCard(category: category)
                                     .frame(maxWidth: .infinity)
                             }
@@ -42,6 +28,8 @@ struct Categories: View {
                         .padding(.bottom, 110)
                     }
                     .scrollIndicators(.hidden)
+                }.task {
+                    await vm.fetchCategories()
                 }
             }
             .tabItem {
@@ -52,11 +40,11 @@ struct Categories: View {
 }
 
 struct CategoryCard: View {
-    let category: Category
-
+  
+    let category : CategoryItem
     var body: some View {
         HStack(spacing: 20) {
-            AsyncImage(url: URL(string: category.imageURL)) { image in
+            AsyncImage(url: URL(string: category.imageUrl)) { image in
                 image
                     .resizable()
                     .scaledToFill()
@@ -66,7 +54,7 @@ struct CategoryCard: View {
             .frame(width: 112, height: 112)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
-            Text(category.rawValue)
+            Text(category.title)
                 .font(.title3.weight(.bold))
                 .foregroundStyle(.primary)
 
