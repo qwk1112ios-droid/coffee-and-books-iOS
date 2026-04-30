@@ -19,8 +19,14 @@ struct Categories: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(vm.categories) { category in
-                                CategoryCard(category: category)
-                                    .frame(maxWidth: .infinity)
+                                NavigationLink {
+                                    destinationView(for: category.destination)
+                                } label: {
+                                   
+                                    CategoryCard(category: category)
+                                        .frame(maxWidth: .infinity)
+                                }
+
                             }
                         }
                         .padding(.horizontal, 20)
@@ -35,9 +41,56 @@ struct Categories: View {
             .tabItem {
                 Label("Menu", systemImage: "cup.and.saucer.fill")
             }
+            
+            NavigationStack {
+                ZStack {
+                    FluidModernBackground()
+                        .ignoresSafeArea()
+
+                    BookView()
+                }
+            }
+            .background(Color.clear)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .tabBar)
+            .tabItem {
+                Label("Shop", systemImage: "book.fill")
+            }
+            
+            NavigationStack {
+                ZStack {
+                    FluidModernBackground()
+                        .ignoresSafeArea()
+
+                    InfoSetting()
+                }
+            }
+            .background(Color.clear)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .tabBar)
+            .tabItem {
+                Label("Settings", systemImage: "person.crop.circle")
+            }
         }
     }
-}
+    
+    @ViewBuilder
+       private func destinationView(for destination: CategoryDestination) -> some View {
+           switch destination {
+           case .coffee:
+               ProductView()
+           case .drinks:
+               DrinksView()
+           case .savory:
+               SavoryView()
+           case .bakery:
+               BakeryView()
+              
+           }
+       }
+   }
+
+
 
 struct CategoryCard: View {
   
