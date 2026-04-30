@@ -11,7 +11,7 @@ struct ProductView: View {
     @State var vm = ProductViewModel(service: ProductService())
 
     var body: some View {
-            TabView {
+           
                 NavigationStack {
                     ZStack {
                         FluidModernBackground()
@@ -72,44 +72,16 @@ struct ProductView: View {
                 .background(Color.clear)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .toolbarBackground(.hidden, for: .tabBar)
-                .tabItem {
-                    Label("Menu", systemImage: "cup.and.saucer.fill")
-                }
-                NavigationStack {
-                    ZStack {
-                        FluidModernBackground()
-                            .ignoresSafeArea()
+                
+                
 
-                        BookView()
-                    }
-                }
-                .background(Color.clear)
-                .toolbarBackground(.hidden, for: .navigationBar)
-                .toolbarBackground(.hidden, for: .tabBar)
-                .tabItem {
-                    Label("Shop", systemImage: "book.fill")
-                }
-
-                NavigationStack {
-                    ZStack {
-                        FluidModernBackground()
-                            .ignoresSafeArea()
-
-                        InfoSetting()
-                    }
-                }
-                .background(Color.clear)
-                .toolbarBackground(.hidden, for: .navigationBar)
-                .toolbarBackground(.hidden, for: .tabBar)
-                .tabItem {
-                    Label("Settings", systemImage: "person.crop.circle")
-                }
+              
                 
                
             }
-            .background(Color.clear)
+           
         }
-    }
+    
 
 
 #Preview {
