@@ -37,7 +37,7 @@ struct Categories: View {
                                     .offset(y: -2)
                             }
 
-                            Text("What are you in the mood for? Now ")
+                            Text("What are you in the mood for? ")
                                 .font(.title3)
                                 .foregroundStyle(Color.coffeeSecondary)
                         }
@@ -126,11 +126,11 @@ struct CategoryCard: View {
     private var iconName: String {
         switch category.destination {
         case .coffee:
-            return "cup.and.saucer.fill"
+            return "cb2"
         case .drinks:
-            return "takeoutbag.and.cup.and.straw.fill"
+            return "soda"
         case .savory:
-            return "leaf.fill"
+            return "sandwich"
         case .bakery:
             return "croissant"
         }
@@ -184,7 +184,9 @@ struct CategoryCard: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Image(iconName)
-                    .font(.system(size: 18, weight: .semibold))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
                     .foregroundStyle(accentColor)
                     .frame(width: 42, height: 42)
                     .background(accentColor.opacity(0.12))
@@ -193,6 +195,8 @@ struct CategoryCard: View {
                 Text(category.title)
                     .font(.title2.weight(.bold))
                     .foregroundStyle(Color.coffeePrimary)
+                Text(category.destination.rawValue)
+                    .font(.caption)
 
                 Text(subtitle)
                     .font(.subheadline)

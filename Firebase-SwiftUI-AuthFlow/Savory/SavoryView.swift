@@ -27,7 +27,7 @@ struct SavoryView: View {
                             value: isPulsing
                         )
 
-                    Image(systemName: "fork.knife.circle.fill")
+                    Image(systemName: "cup.and.saucer.fill")
                         .font(.system(size: 76))
                         .foregroundStyle(.gray.opacity(0.75))
                         .offset(y: isFloating ? -8 : 8)
