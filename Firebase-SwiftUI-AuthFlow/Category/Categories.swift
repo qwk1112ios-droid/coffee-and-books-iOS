@@ -37,7 +37,7 @@ struct Categories: View {
                                     .offset(y: -2)
                             }
 
-                            Text("What are you in the mood for?")
+                            Text("What are you in the mood for? Now ")
                                 .font(.title3)
                                 .foregroundStyle(Color.coffeeSecondary)
                         }
