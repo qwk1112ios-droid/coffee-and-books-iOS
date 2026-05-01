@@ -41,4 +41,9 @@ extension Color {
         red: 0.68,
         green: 0.52,
         blue: 0.60)
+    
+    
+        static let coffeePrimary = Color(red: 0.32, green: 0.24, blue: 0.20)
+        static let coffeeSecondary = Color(red: 0.55, green: 0.48, blue: 0.44)
+    
 }

@@ -8,10 +8,7 @@
 
 import SwiftUI
 
-extension Color {
-    static let coffeePrimary = Color(red: 0.32, green: 0.24, blue: 0.20)
-    static let coffeeSecondary = Color(red: 0.55, green: 0.48, blue: 0.44)
-}
+
 
 struct Categories: View {
     @State var vm = CategoryViewModel(service: CategoryService())
@@ -19,16 +16,16 @@ struct Categories: View {
         TabView {
             NavigationStack {
                 ZStack {
-               FluidModernBackground()
+                    FluidModernBackground()
                         .ignoresSafeArea()
-
+                    
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack() {
                                 Text("Good evening")
                                     .font(.largeTitle.weight(.bold))
                                     .foregroundStyle(Color.coffeePrimary)
-
+                                
                                 Image("icn4")
                                     .resizable()
                                     .scaledToFill()
@@ -36,7 +33,7 @@ struct Categories: View {
                                     .frame(width: 50, height: 50)
                                     .offset(y: -2)
                             }
-
+                            
                             Text("What are you in the mood for? ")
                                 .font(.title3)
                                 .foregroundStyle(Color.coffeeSecondary)
@@ -45,23 +42,63 @@ struct Categories: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 28)
                         .padding(.bottom, 8)
-
-                        LazyVStack(spacing: 18) {
-                            ForEach(vm.categories) { category in
-                                NavigationLink {
-                                    destinationView(for: category.destination)
-                                } label: {
-                                    CategoryCard(category: category)
-                                        .frame(maxWidth: .infinity)
+                        
+                        if vm.isLoading {
+                            ProgressView("Loading menu...")
+                        }
+                        else if let error = vm.errorMessage {
+                            VStack(spacing: 12) {
+                                Image(systemName: "wifi.exclamationmark")
+                                    .font(.largeTitle)
+                                
+                                Text("Something went wrong")
+                                    .font(.headline)
+                                
+                                Text(error)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                
+                                Button("Try Again") {
+                                    Task {
+                                        await vm.fetchCategories()
+                                    }
                                 }
-                                .buttonStyle(.plain)
+                            }
+                            .padding()
+                        }
+                        else if vm.isEmpty {
+                            VStack(spacing: 12) {
+                                Image(systemName: "cup.and.saucer")
+                                    .font(.largeTitle)
+                                
+                                Text("No categories yet")
+                                    .font(.headline)
+                                
+                                Text("Check back soon.")
+                                    .foregroundStyle(.secondary)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
-                        .padding(.bottom, 110)
-                    }
-                    .scrollIndicators(.hidden)
+                        else {
+                            LazyVStack(spacing: 18) {
+                                ForEach(vm.categories) { category in
+                                    NavigationLink {
+                                        destinationView(for: category.destination)
+                                    } label: {
+                                        CategoryCard(category: category)
+                                            .frame(maxWidth: .infinity)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                            .padding(.bottom, 110)
+                            
+                            
+                            .scrollIndicators(.hidden)
+                        }
+                }
                 }.task {
                     await vm.fetchCategories()
                 }
@@ -126,13 +163,13 @@ struct CategoryCard: View {
     private var iconName: String {
         switch category.destination {
         case .coffee:
-            return "cb2"
+            return AppImage.Category.coffee
         case .drinks:
-            return "soda"
+            return AppImage.Category.drinks
         case .savory:
-            return "sandwich"
+            return AppImage.Category.savory
         case .bakery:
-            return "croissant"
+            return AppImage.Category.bakery
         }
     }
 
@@ -195,8 +232,6 @@ struct CategoryCard: View {
                 Text(category.title)
                     .font(.title2.weight(.bold))
                     .foregroundStyle(Color.coffeePrimary)
-                Text(category.destination.rawValue)
-                    .font(.caption)
 
                 Text(subtitle)
                     .font(.subheadline)
