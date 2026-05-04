@@ -37,7 +37,8 @@ class CategoryViewModel {
 
             } catch {
 
-                errorMessage = error.localizedDescription
+                errorMessage = "Unable to load categories. Please try again."
+                print (error.localizedDescription)
 
             }
 

@@ -14,4 +14,8 @@ struct Product: Identifiable, Codable {
     let description : String
     let price : Double
     let imageUrl: String
+    
+    var unwrappedID: String {
+            id ?? "missing-id"
+        }
 }

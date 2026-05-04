@@ -26,7 +26,7 @@ struct Categories: View {
                                     .font(.largeTitle.weight(.bold))
                                     .foregroundStyle(Color.coffeePrimary)
                                 
-                                Image("icn4")
+                                Image(AppImage.Header.coffeeIcon)
                                     .resizable()
                                     .scaledToFill()
                                     .font(Font.largeTitle.weight(.bold))
