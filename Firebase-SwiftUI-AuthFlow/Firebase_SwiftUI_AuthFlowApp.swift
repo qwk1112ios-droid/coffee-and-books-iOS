@@ -12,6 +12,7 @@ import GoogleSignIn
 @main
 struct Firebase_SwiftUI_AuthFlowApp: App {
     @State var authManager: AuthenticationManager
+    @State private var cartViewModel = CartViewModel()
     init () {
         FirebaseApp.configure()
         if let clientID = FirebaseApp.app()?.options.clientID {
@@ -25,6 +26,7 @@ struct Firebase_SwiftUI_AuthFlowApp: App {
         WindowGroup {
             RootView()
                 .environment(authManager)
+                .environment(cartViewModel)
             
         }
     }

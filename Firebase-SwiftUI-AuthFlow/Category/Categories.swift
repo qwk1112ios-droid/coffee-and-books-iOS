@@ -127,6 +127,21 @@ struct Categories: View {
                     FluidModernBackground()
                         .ignoresSafeArea()
 
+                    CartView()
+                }
+            }
+            .background(Color.clear)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .tabBar)
+            .tabItem {
+                Label("Cart", systemImage: "cart.fill")
+            }
+            
+            NavigationStack {
+                ZStack {
+                    FluidModernBackground()
+                        .ignoresSafeArea()
+
                     InfoSetting()
                 }
             }
