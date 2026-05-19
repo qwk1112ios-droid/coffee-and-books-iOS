@@ -11,11 +11,18 @@ import Foundation
 final class CartViewModel {
     
     private(set) var items: [CartItem] = []
+    let service: PaymentServiceProtocol
+    var successMessage : String = ""
+    var errorMessage : String?
+    var isLoading : Bool = false
+    
     
     var total : Double {
         items.reduce(0) { $0 + $1.totalPrice }
     }
-    
+    init(service: PaymentServiceProtocol = PaymentService()) {
+        self.service = service
+    }
     // add coffee product only for now ... then I will add a funciton for other items on the menu and books.
     
     func addProduct(_ product: Product) {
@@ -48,6 +55,18 @@ final class CartViewModel {
                items.remove(at: index)
            }
        }
+    
+    func pay() async throws {
+      isLoading =  false
+      errorMessage = nil
+        do {
+            successMessage = try await service.startPayment()
+        }
+        catch {
+            let error = error.localizedDescription
+            errorMessage = error
+        }
+    }
     
 }
 

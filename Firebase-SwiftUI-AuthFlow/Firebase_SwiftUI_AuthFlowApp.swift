@@ -12,7 +12,7 @@ import GoogleSignIn
 @main
 struct Firebase_SwiftUI_AuthFlowApp: App {
     @State var authManager: AuthenticationManager
-    @State private var cartViewModel = CartViewModel()
+    @State private var cartViewModel:  CartViewModel
     init () {
         FirebaseApp.configure()
         if let clientID = FirebaseApp.app()?.options.clientID {
@@ -21,6 +21,7 @@ struct Firebase_SwiftUI_AuthFlowApp: App {
                     assertionFailure("Missing Firebase clientID. Check GoogleService-Info.plist target membership.")
                 }
         _authManager = State(initialValue: AuthenticationManager())
+        _cartViewModel = State(initialValue: CartViewModel())
     }
     var body: some Scene {
         WindowGroup {

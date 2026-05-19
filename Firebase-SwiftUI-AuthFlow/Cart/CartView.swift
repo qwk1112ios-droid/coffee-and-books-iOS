@@ -47,7 +47,9 @@ struct CartView: View {
                     Text("$\(cart.total, specifier: "%.2f")")
                         .font(.headline)
                 }
+                
                 CheckoutButton()
+                Text(cart.successMessage)
 
             }
             .navigationTitle("Cart")
@@ -64,10 +66,17 @@ struct CheckoutButton: View {
 
     var body: some View {
         Button {
-            print("Checkout tapped. Total: \(cart.total)")
+            Task {
+                 try await cart.pay()
+            }
+          
         } label: {
             Text("Checkout")
+                .foregroundColor(.white)
+                
                 .frame(maxWidth: .infinity)
+                .background(.blue)
+                 
         }
         .buttonStyle(.borderless)
         .disabled(cart.items.isEmpty)
