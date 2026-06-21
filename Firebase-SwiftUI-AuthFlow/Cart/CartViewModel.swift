@@ -57,7 +57,7 @@ final class CartViewModel {
        }
     
     func pay() async throws {
-      isLoading =  false
+      isLoading =  true
       errorMessage = nil
         do {
             successMessage = try await service.startPayment()
@@ -66,6 +66,7 @@ final class CartViewModel {
             let error = error.localizedDescription
             errorMessage = error
         }
+        isLoading = false
     }
     
 }
