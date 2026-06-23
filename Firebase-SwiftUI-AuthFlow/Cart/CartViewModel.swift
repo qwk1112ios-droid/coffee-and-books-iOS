@@ -4,7 +4,7 @@
 //
 //  Created by Amel Sbaihi on 5/1/26.
 //
-
+import StripePaymentSheet
 import Foundation
 @Observable
 
@@ -15,11 +15,17 @@ final class CartViewModel {
     var successMessage : String = ""
     var errorMessage : String?
     var isLoading : Bool = false
+    var paymentSheet: PaymentSheet?
+    
     
     
     var total : Double {
         items.reduce(0) { $0 + $1.totalPrice }
     }
+    var totalAmountInCents: Int {
+        Int((total * 100).rounded())
+    }
+    
     init(service: PaymentServiceProtocol = PaymentService()) {
         self.service = service
     }
@@ -56,11 +62,23 @@ final class CartViewModel {
            }
        }
     
+    
+    
+    //MARK: - Stripe service payment
+    
     func pay() async throws {
       isLoading =  true
       errorMessage = nil
         do {
-            successMessage = try await service.startPayment()
+            let clientSecret = try await service.startPayment(amount: totalAmountInCents).clientSecret
+            var configuration = PaymentSheet.Configuration()
+           configuration.merchantDisplayName = "Coffee & Books"
+           paymentSheet = PaymentSheet(
+                           paymentIntentClientSecret: clientSecret,
+                           configuration: configuration
+                       )
+           successMessage = "Payment Sheet Ready \(clientSecret)"
+           print("******* Success Message**********")
         }
         catch {
             let error = error.localizedDescription

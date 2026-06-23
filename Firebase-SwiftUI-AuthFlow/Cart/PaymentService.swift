@@ -8,17 +8,35 @@
 import Foundation
 import FirebaseFunctions
 
+struct PaymentIntentResponse {
+    let clientSecret: String
+    let publishableKey: String
+}
+
 protocol PaymentServiceProtocol {
-    func startPayment () async throws -> String
+    func startPayment (amount: Int) async throws -> PaymentIntentResponse
 }
 
 class PaymentService: PaymentServiceProtocol {
     let functions = Functions.functions()
-    func startPayment() async throws -> String {
-        let result = try await functions.httpsCallable("createPaymentIntent").call()
-        guard let data = result.data as? [String: Any], let message = data["message"] as? String else {
-            throw NSError(domain: "Cloud", code: 0, userInfo: nil)
+    func startPayment(amount:Int) async throws -> PaymentIntentResponse {
+        let result = try await functions
+            .httpsCallable("createPaymentIntent")
+            .call([
+                "amount": amount,
+                "currency": "usd"
+            ])
+
+        guard let data = result.data as? [String: Any],
+              let clientSecret = data["paymentIntent"] as? String,
+              let publishableKey = data["publishableKey"] as? String
+        else {
+            throw NSError(domain: "Cloud", code: 0)
         }
-        return message
+
+        return PaymentIntentResponse(
+            clientSecret: clientSecret,
+            publishableKey: publishableKey
+        )
     }
 }

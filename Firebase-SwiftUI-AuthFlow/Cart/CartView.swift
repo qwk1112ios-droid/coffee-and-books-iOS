@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import StripePaymentSheet
 
 struct CartView: View {
     @Environment(CartViewModel.self) private var cart
+    @State private var isPaymentSheetPresented = false
         var body: some View {
             List {
                 ForEach(cart.items) { item in
@@ -47,12 +49,27 @@ struct CartView: View {
                     Text("$\(cart.total, specifier: "%.2f")")
                         .font(.headline)
                 }
-                
-                CheckoutButton()
+                CheckoutButton(isPresented: $isPaymentSheetPresented)
                 Text(cart.successMessage)
 
             }
             .navigationTitle("Cart")
+            .paymentSheet(
+                isPresented: $isPaymentSheetPresented,
+                paymentSheet: cart.paymentSheet ?? PaymentSheet(
+                    paymentIntentClientSecret: "",
+                    configuration: .init()
+                )
+            ) { result in
+                switch result {
+                case .completed:
+                    cart.successMessage = "Payment completed"
+                case .canceled:
+                    cart.errorMessage = "Payment canceled"
+                case .failed(let error):
+                    cart.errorMessage = error.localizedDescription
+                }
+            }
         }
     }
 
@@ -61,13 +78,19 @@ struct CartView: View {
     CartView()
 }
 
+//MARK: - Checkout Button
+
 struct CheckoutButton: View {
     @Environment(CartViewModel.self) private var cart
+    @Binding var isPresented: Bool
 
     var body: some View {
         Button {
             Task {
-                 try await cart.pay()
+                try await cart.pay()
+                if cart.paymentSheet != nil {
+                        isPresented = true
+                        }
             }
           
         } label: {

@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import GoogleSignIn
+import StripePaymentSheet
 
 @main
 struct Firebase_SwiftUI_AuthFlowApp: App {
@@ -20,6 +21,7 @@ struct Firebase_SwiftUI_AuthFlowApp: App {
                 } else {
                     assertionFailure("Missing Firebase clientID. Check GoogleService-Info.plist target membership.")
                 }
+        StripeAPI.defaultPublishableKey = "pk_test_51TSKmwD0agb75Rps96S0YkxBHVyTTfzdU3GEa4Hi4I1rNkjsKW9Brk2w9HGzLsMAb0vtBfUVsVazBs8hpolDOviJ00ERayXfMg"
         _authManager = State(initialValue: AuthenticationManager())
         _cartViewModel = State(initialValue: CartViewModel())
     }
