@@ -10,6 +10,7 @@ import StripePaymentSheet
 
 struct CartView: View {
     @Environment(CartViewModel.self) private var cart
+    @State var paymentVM = PaymentViewModel()
     @State private var isPaymentSheetPresented = false
         var body: some View {
             List {
@@ -49,25 +50,33 @@ struct CartView: View {
                     Text("$\(cart.total, specifier: "%.2f")")
                         .font(.headline)
                 }
-                CheckoutButton(isPresented: $isPaymentSheetPresented)
-                Text(cart.successMessage)
+                CheckoutButton{
+                    Task{
+                        try await paymentVM.pay(amount: cart.totalAmountInCents)
+                        if paymentVM.paymentSheet != nil{
+                            isPaymentSheetPresented = true
+                        }
+                        
+                    }
+                }
+                Text(paymentVM.successMessage)
 
             }
             .navigationTitle("Cart")
             .paymentSheet(
                 isPresented: $isPaymentSheetPresented,
-                paymentSheet: cart.paymentSheet ?? PaymentSheet(
+                paymentSheet: paymentVM.paymentSheet ?? PaymentSheet(
                     paymentIntentClientSecret: "",
                     configuration: .init()
                 )
             ) { result in
                 switch result {
                 case .completed:
-                    cart.successMessage = "Payment completed"
+                    paymentVM.successMessage = "Payment completed"
                 case .canceled:
-                    cart.errorMessage = "Payment canceled"
+                    paymentVM.errorMessage = "Payment canceled"
                 case .failed(let error):
-                    cart.errorMessage = error.localizedDescription
+                    paymentVM.errorMessage = error.localizedDescription
                 }
             }
         }
@@ -82,16 +91,11 @@ struct CartView: View {
 
 struct CheckoutButton: View {
     @Environment(CartViewModel.self) private var cart
-    @Binding var isPresented: Bool
+    let action: () -> Void
 
     var body: some View {
         Button {
-            Task {
-                try await cart.pay()
-                if cart.paymentSheet != nil {
-                        isPresented = true
-                        }
-            }
+           action()
           
         } label: {
             Text("Checkout")
